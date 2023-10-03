@@ -1,0 +1,45 @@
+{% extends 'quotes/base.html' %}
+
+{% block content %}
+{% if url_templates == "tag" %}
+<h3>Quotes with tag '{{ tag }}':</h3>
+{% endif %}
+<div class="row">
+    <div class="col-md-8">
+        {% if user.is_authenticated %}
+        <!-- Добавить автора -->
+        <a href="{% url 'quotes:add_author' %}" class="btn btn-primary mb-3 md-5">Додати Автора</a>
+
+        <!-- Добавить цитату -->
+        <a href="{% url 'quotes:add_quote' %}" class="btn btn-primary mb-3 md-5">Додати Цитату</a>
+
+        <!-- Скачать данные -->
+        <a href="{% url 'quotes:download_data' %}" class="btn btn-primary mb-3 md-5">Скачати дані</a>
+        {% endif %}
+
+        {% for quote in quotes %}
+        <div class="quote" itemscope="" itemtype="http://schema.org/CreativeWork">
+            <span class="text" itemprop="text">{{ quote.quote }}</span>
+            <div class="author-info">
+                <a href="{% url 'quotes:author_info' quote.author.fullname %}">
+                    <img class="author-quote-photo" src="{{ quote.author.photo_url }}"
+                         alt="{{ quote.author.fullname }}">
+                    <span class="author-name">{{ quote.author.fullname }}</span>
+                </a>
+            </div>
+            <div class="tags">
+                Tags:
+                {% for tag in quote.tags.all %}
+                <a class="tag" href="{% url 'quotes:tag_page' tag.name 1 %}">{{ tag.name }}</a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+
+        {% include 'quotes/pagin.html' %}
+    </div>
+
+    {% include 'quotes/sidebar.html' %}
+
+</div>
+{% endblock %}
